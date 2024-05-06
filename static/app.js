@@ -1,18 +1,32 @@
 //서버에서 받아온 내용 html에 추가
-function displayMemo(memo) {
-  const ul = document.querySelector("#memo-ul"); //html ul 쿼리셀렉터로 불러오기
-  const li = document.createElement("li"); //li 태그 만들기
-  li.innerText = `[id:${memo.id}] ${memo.content}`;
-  ul.appendChild(li);
+function editMemo(event) {
+  console.log(event.target); //특정 id 어떤 버튼이 눌렸는지
 }
 
+function displayMemo(memo) {
+  const ul = document.querySelector("#memo-ul"); //html ul 쿼리셀렉터로 불러오기
+
+  const li = document.createElement("li"); //li 태그 만들기
+  li.innerText = `[id:${memo.id}] ${memo.content}`;
+
+  /*2-44
+  const editBtn = document.createElement("button"); //수정하기 버튼
+  editBtn.innerText = "수정하기";
+  editBtn.addEventListener("click", editMemo); //이벤트추가. editMemo 함수 호출
+  editBtn.dataset.id = memo.id; //dataset 속성에 id값 넣어주기
+*/
+
+  ul.appendChild(li);
+  //li.append(editBtn);
+}
+//get요청
 async function readMemo() {
   const res = await fetch("/memos"); //memos get해서 가져와주세요
-  const JsonRes = await res.json(); //json으로 받음
+  const jsonRes = await res.json(); //json으로 받음
   //jsonRes = [{id:123, content:'블라블라'}] 내용을 받아온 후 html 추가
   const ul = document.querySelector("#memo-ul");
-  //ul.innerHTML = ""; //초기화
-  JsonRes.forEach(displayMemo);
+  //ul.innerHTML = ""; //초기화----------------에러 수정 후 활성화 필요
+  jsonRes.forEach(displayMemo);
 }
 
 //서버에 메모 만들기 요청, async - await 함께 사용
@@ -20,7 +34,7 @@ async function createMemo(value) {
   const res = await fetch("/memos", {
     //서버 응답 await 기다림. /memos 라는 경로로 요청 보냄. post요청으로 보냄
     method: "POST", //method: post 라는 메소드로 보냄
-    headers: { "Content-Type": "applecation/json" }, //header에 request body로 받아야함. 필수로 추가해야 하는 값 Content-Type": "applecation/json
+    headers: { "Content-Type": "application/json" }, //header에 request body로 받아야함. 필수로 추가해야 하는 값 Content-Type": "application/json
     body: JSON.stringify({
       //JSON.stringfy 통신시 문자열만 전송. 문자열로 body 변경 후 전송 후, 받는 쪽에서 다시 json형태로 받고, 처리하고..
       //메모확인 id
@@ -28,10 +42,14 @@ async function createMemo(value) {
       content: value,
     }),
   });
+
+  const jsonRes = await res.json();
+  console.log("jsonRes", jsonRes);
+
   readMemo();
 }
 
-//메모 생성 함수
+//메모 생성 함수, 제출 시 동작
 function handleSubmit(event) {
   //이벤트 넘어옴
   event.preventDefault(); //이벤트가 발생하는걸 막는 함수
