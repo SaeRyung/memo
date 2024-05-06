@@ -14,6 +14,15 @@ async function editMemo(event) {
   //서버에 특정 id 값 보내기->request body
 }
 
+//메모삭제 이벤트
+async function deleteMemo(event) {
+  const id = event.target.dataset.id;
+  const res = await fetch(`/memos/${id}`, {
+    method: "DELETE", //값 삭제 메소드:delete
+  }); //request body에 값을 넣을게 아님, id만으로 서버에서는 데이터 삭제 가능하므로
+  readMemo();
+}
+
 function displayMemo(memo) {
   const ul = document.querySelector("#memo-ul"); //html ul 쿼리셀렉터로 불러오기
 
@@ -26,8 +35,15 @@ function displayMemo(memo) {
   editBtn.addEventListener("click", editMemo); //이벤트추가. editMemo 함수 호출
   editBtn.dataset.id = memo.id; //dataset 속성에 id값 넣어주기
 
-  ul.appendChild(li);
+  //삭제버튼
+  const delBtn = document.createElement("button");
+  delBtn.innerText = "삭제";
+  delBtn.addEventListener("click", deleteMemo);
+  delBtn.dataset.id = memo.id;
+
   li.append(editBtn);
+  li.appendChild(delBtn);
+  ul.appendChild(li);
 }
 //get요청
 async function readMemo() {

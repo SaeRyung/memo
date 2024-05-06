@@ -26,13 +26,24 @@ def read_memo():
     return memos
 
 #수정 메모 put 요청받음
-@app.put("/memo/{memo_id}")
+@app.put("/memos/{memo_id}")
 def put_memo(req_memo:Memo):
     for memo in memos:
         if memo.id==req_memo.id: #meme.id가 요청해온 req_memo.id와 같을때
             memo.content = req_memo.content
             return '성공'
     return '그런 메모 없다.'
+
+
+#삭제
+@app.delete("/memos/{memo_id}")
+def delete_memo(memo_id):
+    for index,memo in enumerate(memos): #index값으로 메모 빼내기, index와 함께 쓸때 enumerate 함수 사용
+        if memo.id==memo.id:
+            memos.pop(index)
+            return '성공'
+    return '그런 메모 없다.'
+    
     
 
 app.mount("/", StaticFiles(directory="static", html=True), name="static")
