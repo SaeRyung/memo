@@ -24,6 +24,15 @@ async def create_memo(memo:Memo): #requestbody memo로 들어옴, 정의된값me
 @app.get("/memos")
 def read_memo():
     return memos
+
+#수정 메모 put 요청받음
+@app.put("/memo/{memo_id}")
+def put_memo(req_memo:Memo):
+    for memo in memos:
+        if memo.id==req_memo.id: #meme.id가 요청해온 req_memo.id와 같을때
+            memo.content = req_memo.content
+            return '성공'
+    return '그런 메모 없다.'
     
 
 app.mount("/", StaticFiles(directory="static", html=True), name="static")

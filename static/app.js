@@ -1,6 +1,17 @@
 //서버에서 받아온 내용 html에 추가
-function editMemo(event) {
-  console.log(event.target); //특정 id 어떤 버튼이 눌렸는지
+async function editMemo(event) {
+  const id = event.target.dataset.id; //특정 id 어떤 버튼이 눌렸는지
+  const editInput = prompt("수정할 값을 입력하세요"); //
+  const res = await fetch(`/memos/${id}`, {
+    method: "PUT", //값 수정. 이 값으로 바꿔줘 메소드: put
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      id: id, //id,로만 생략해도 id 들어감
+      content: editInput,
+    }),
+  });
+  readMemo();
+  //서버에 특정 id 값 보내기->request body
 }
 
 function displayMemo(memo) {
@@ -9,15 +20,14 @@ function displayMemo(memo) {
   const li = document.createElement("li"); //li 태그 만들기
   li.innerText = `[id:${memo.id}] ${memo.content}`;
 
-  /*2-44
+  //수정버튼
   const editBtn = document.createElement("button"); //수정하기 버튼
   editBtn.innerText = "수정하기";
   editBtn.addEventListener("click", editMemo); //이벤트추가. editMemo 함수 호출
   editBtn.dataset.id = memo.id; //dataset 속성에 id값 넣어주기
-*/
 
   ul.appendChild(li);
-  //li.append(editBtn);
+  li.append(editBtn);
 }
 //get요청
 async function readMemo() {
@@ -25,7 +35,7 @@ async function readMemo() {
   const jsonRes = await res.json(); //json으로 받음
   //jsonRes = [{id:123, content:'블라블라'}] 내용을 받아온 후 html 추가
   const ul = document.querySelector("#memo-ul");
-  //ul.innerHTML = ""; //초기화----------------에러 수정 후 활성화 필요
+  ul.innerHTML = ""; //초기화----------------에러 수정 후 활성화 필요
   jsonRes.forEach(displayMemo);
 }
 
@@ -43,8 +53,8 @@ async function createMemo(value) {
     }),
   });
 
-  const jsonRes = await res.json();
-  console.log("jsonRes", jsonRes);
+  //const jsonRes = await res.json();
+  //console.log("jsonRes", jsonRes);
 
   readMemo();
 }
